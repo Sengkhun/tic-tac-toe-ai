@@ -1,11 +1,11 @@
-var network = require('net');
+var network = require( 'net' );
 var client = new network.Socket();
 
 var HOST = '172.20.10.4';
 var PORT = 5000;
 
 // Initial Board and player
-var origBoard = '0,0,0,0,0,0,0,0,0';
+var origBoard = '';
 var me = 'x';
 var opponent = 'o';
 const winCombos = [
@@ -51,10 +51,12 @@ client.on( 'data', function( data ) {
         case 10:
 
             // Our Turn
-            // if ( compare( respond[0], me ) ) {
+            if ( compare( respond[0], me ) ) {
 
+                // Delete the first element
                 respond.shift();
 
+                // Convert to origBoard formart
                 for ( var i = 0; i < respond.length; i++ ) {
                     respond[i] = respond[i] == 0 ? i : respond[i];
                 }
@@ -63,7 +65,7 @@ client.on( 'data', function( data ) {
                 result = convertToIndex( minimax( origBoard, me ).index );
                 client.write( `${result}\n` );
 
-            // }
+            }
             break;
     }
 
