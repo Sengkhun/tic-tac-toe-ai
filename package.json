@@ -1,0 +1,11 @@
+{
+  "name": "tic-tac-toe-player",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Socret360/tic-tac-toe-player.git",
+  "author": "Socret Lee <lee.socret@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "tic-tac-toe-playing-algorithms": "^1.0.0"
+  }
+}
