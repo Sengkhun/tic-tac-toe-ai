@@ -1,7 +1,7 @@
 var network = require( 'net' );
 var client = new network.Socket();
 
-var HOST = '172.20.10.4';
+var HOST = '172.20.10.3';
 var PORT = 5000;
 
 // Initial Board and player
@@ -21,49 +21,61 @@ const winCombos = [
 
 client.connect( PORT, HOST, function() {
 
-    console.log( 'Connected' );
     client.setEncoding( 'utf8' );
-    client.write( 'Client: Ready\n' );
+    client.write( 'Sengkhun Sokhavirith and Utdorm are ready\n' );
+    console.log( 'Connected' );
 
 });
 
 client.on( 'data', function( data ) {
 
-    const respond = data.toString().split( "," );
+    var respond = data.toString();
 
     switch ( respond.length ) {
 
         case 1:
 
-            if ( compare( respond[0], "-1" ) ) {
+            if ( respond === "-1" ) {
 
                 // Game Over, Terminated
                 client.destroy();
 
-            } else {
+            } else if ( respond[0] === 'x' || respond[0] === 'o' ) {
+
                 // Assignment Identity
                 me = respond[0];
                 opponent = compare( me, 'x' ) ? 'o' : 'x';
+                client.write( "1\n" );
+                console.log( "I am " + me );
+
             }
             break;
 
         // Apply Minimax Algorithm
-        case 10:
+        default:
 
             // Our Turn
-            if ( compare( respond[0], me ) ) {
+            if ( respond[0] === me ) {
 
-                // Delete the first element
-                respond.shift();
+                var dataStr = data.toString();
+                var boardStr = dataStr.substring( 3, dataStr.length );
 
-                // Convert to origBoard formart
-                for ( var i = 0; i < respond.length; i++ ) {
-                    respond[i] = respond[i] == 0 ? i : respond[i];
+                var borad = [];
+                for (var i = 0; i < boardStr.length; i++) {
+                    if ( boardStr[i] !== ',' && boardStr[i] !== '\u0000' ) {
+                        borad.push( boardStr.charAt(i) );
+                    }
                 }
 
-                origBoard = respond;
+                // Convert to origBoard formart
+                for ( var i = 0; i < borad.length; i++ ) {
+                    borad[i] = borad[i] == 0 ? i : borad[i];
+                }
+                console.log(borad);
+                origBoard = borad;
                 result = convertToIndex( minimax( origBoard, me ).index );
-                client.write( `${result}\n` );
+                console.log(result);
+                client.write( result + "\n" );
 
             }
             break;
@@ -85,7 +97,6 @@ function convertToIndex( index ) {
     let result = "";
     result += parseInt( index / 3 ); // Row
     result += parseInt( index % 3 ); // Coloum
-
     return result;
 
 }
